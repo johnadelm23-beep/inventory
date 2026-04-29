@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:inventory/features/auth/data/model/user_data.dart';
 
 class AuthRepo {
   static FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -86,6 +87,21 @@ class AuthRepo {
       return true;
     } catch (e) {
       return false;
+    }
+  }
+
+  static final currentUser = FirebaseAuth.instance.currentUser;
+
+  static Future<UserData?> getUserData() async {
+    try {
+      final user = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(currentUser!.uid)
+          .get();
+      print(user.data());
+      return UserData.fromJson(user.data() ?? {});
+    } catch (e) {
+      return null;
     }
   }
 }

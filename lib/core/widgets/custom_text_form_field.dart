@@ -29,8 +29,10 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   Widget build(BuildContext context) {
     return TextFormField(
       autovalidateMode: .onUserInteraction,
-      textAlign: .start,
-      textDirection: .rtl,
+      textAlign: widget.keyboardType == .number
+          ? TextAlign.left
+          : TextAlign.start,
+      textDirection: widget.keyboardType == .number ? TextDirection.ltr : .rtl,
       maxLines: widget.maxLines,
       keyboardType: widget.keyboardType,
       obscureText: widget.obscureText && isPassword,

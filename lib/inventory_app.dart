@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:inventory/features/auth/cubit/cubit/auth_cubit.dart';
 import 'package:inventory/features/auth/ui/login_screen.dart';
+import 'package:inventory/features/home/cubit/cubit/home_cubit.dart';
 import 'package:inventory/features/home/ui/home_screen.dart';
 
 class InventoryApp extends StatelessWidget {
@@ -18,10 +19,7 @@ class InventoryApp extends StatelessWidget {
       child: MaterialApp(
         theme: ThemeData(fontFamily: "appFont"),
         home: FirebaseAuth.instance.currentUser == null
-            ? BlocProvider(
-                create: (context) => AuthCubit(),
-                child: LoginScreen(),
-              )
+            ? LoginScreen()
             : HomeScreen(),
       ),
     );

@@ -7,6 +7,7 @@ import 'package:inventory/core/widgets/custom_text_form_field.dart';
 import 'package:inventory/features/auth/cubit/cubit/auth_cubit.dart';
 import 'package:inventory/features/auth/ui/register_screen.dart';
 import 'package:inventory/features/auth/ui/widgets/sigin_with_google_container.dart';
+import 'package:inventory/features/home/cubit/cubit/home_cubit.dart';
 import 'package:inventory/features/home/ui/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {

@@ -5,6 +5,7 @@ import 'package:inventory/core/theme/app_colors.dart';
 import 'package:inventory/core/widgets/app_button.dart';
 import 'package:inventory/core/widgets/custom_text_form_field.dart';
 import 'package:inventory/features/auth/cubit/cubit/auth_cubit.dart';
+import 'package:inventory/features/home/cubit/cubit/home_cubit.dart';
 import 'package:inventory/features/home/ui/home_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
