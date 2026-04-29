@@ -90,15 +90,15 @@ class AuthRepo {
     }
   }
 
-  static final currentUser = FirebaseAuth.instance.currentUser;
-
-  static Future<UserData?> getUserData() async {
+  static Future<UserData?> getUserData(String uid) async {
     try {
+      final currentUser = await FirebaseAuth.instance.currentUser;
       final user = await FirebaseFirestore.instance
           .collection("users")
-          .doc(currentUser!.uid)
+          .doc(uid)
           .get();
       print(user.data());
+
       return UserData.fromJson(user.data() ?? {});
     } catch (e) {
       return null;

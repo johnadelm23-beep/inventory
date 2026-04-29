@@ -12,10 +12,10 @@ class HomeCubit extends Cubit<HomeState> {
 
   UserData? userData;
 
-  Future<void> getUserData() async {
+  Future<void> getUserData(String uid) async {
     emit(GetUserLoading());
 
-    final response = await AuthRepo.getUserData();
+    final response = await AuthRepo.getUserData(uid);
 
     if (response != null) {
       userData = response;

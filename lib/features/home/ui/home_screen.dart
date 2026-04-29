@@ -71,10 +71,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "مرحبا ${user.name}",
+                            "مرحباً بك يا ${user.name} 👋",
                             style: TextStyle(fontSize: 22.sp),
                           ),
-
                           Row(
                             children: [
                               IconButton(
@@ -132,7 +131,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           final docs = snapshot.data!.docs;
 
                           if (docs.isEmpty) {
-                            return const Center(child: Text("لا يوجد منتجات"));
+                            return Center(
+                              child: Text(
+                                "لا يوجد منتجات لديك لعرضها",
+                                style: TextStyle(fontSize: 25.sp),
+                              ),
+                            );
                           }
 
                           return ListView.separated(
@@ -159,13 +163,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
                               final isLow = quantity <= minQuantity;
 
+                              /// controller لكل عنصر
+                              final controller = TextEditingController(
+                                text: quantity.toString(),
+                              );
+
                               return Container(
                                 padding: EdgeInsets.all(16.r),
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: isLow
+                                      ? Colors.red
+                                      : AppColors.whiteColor,
                                   borderRadius: BorderRadius.circular(16.r),
                                   border: Border.all(
-                                    color: isLow ? Colors.red : Colors.green,
+                                    color: isLow ? Colors.black : Colors.green,
                                   ),
                                   boxShadow: const [
                                     BoxShadow(
@@ -177,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    /// NAME + DELETE
+                                    /// NAME
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
@@ -188,15 +199,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                             style: TextStyle(
                                               fontSize: 20.sp,
                                               fontWeight: FontWeight.bold,
+                                              color: isLow
+                                                  ? Colors.white
+                                                  : Colors.black,
                                             ),
                                           ),
                                         ),
 
                                         if (user.isAdmin == true)
                                           IconButton(
-                                            icon: const Icon(
+                                            icon: Icon(
                                               Icons.delete,
-                                              color: Colors.black,
+                                              color: isLow
+                                                  ? Colors.white
+                                                  : Colors.grey,
                                             ),
                                             onPressed: () {
                                               context
@@ -207,39 +223,115 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ],
                                     ),
 
-                                    Text(description),
+                                    SizedBox(height: 6.h),
 
-                                    /// QUANTITY CONTROL
+                                    Text(
+                                      description,
+                                      style: TextStyle(
+                                        fontSize: 17.sp,
+                                        color: isLow
+                                            ? Colors.white
+                                            : Colors.black,
+                                      ),
+                                    ),
+
+                                    SizedBox(height: 16.h),
+                                    SizedBox(height: 10.h),
+                                    Text(
+                                      "الكميه المتاحة حاليا: ${quantity}",
+                                      style: TextStyle(
+                                        fontSize: 18.sp,
+                                        color: isLow
+                                            ? Colors.white
+                                            : Colors.black,
+                                      ),
+                                    ),
+
+                                    /// MIN QTY
+                                    Text(
+                                      "الحد الأدنى: $minQuantity",
+                                      style: TextStyle(
+                                        fontSize: 18.sp,
+                                        color: isLow
+                                            ? Colors.white
+                                            : Colors.black,
+                                      ),
+                                    ),
+
+                                    SizedBox(height: 12.h),
+                                    Text(
+                                      "انقر للتعديل:",
+                                      style: TextStyle(
+                                        fontSize: 17.sp,
+                                        color: isLow
+                                            ? Colors.white
+                                            : Colors.black,
+                                      ),
+                                    ),
+
+                                    /// QUANTITY CONTROL (FIXED)
                                     Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
-                                        IconButton(
-                                          icon: const Icon(Icons.remove),
-                                          onPressed: () {
-                                            if (quantity > 0) {
-                                              context
-                                                  .read<HomeCubit>()
-                                                  .updateQuantity(
-                                                    id: id,
-                                                    newQuantity: quantity - 1,
-                                                  );
-                                            }
-                                          },
+                                        /// minus
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(
+                                              12.r,
+                                            ),
+                                            color: AppColors
+                                                .backGroundTextFormFiled,
+                                          ),
+                                          child: IconButton(
+                                            icon: const Icon(
+                                              Icons.remove,
+                                              color: Colors.black,
+                                            ),
+                                            onPressed: () {
+                                              if (quantity > 0) {
+                                                final newValue = quantity - 1;
+
+                                                context
+                                                    .read<HomeCubit>()
+                                                    .updateQuantity(
+                                                      id: id,
+                                                      newQuantity: newValue,
+                                                    );
+
+                                                controller.text = newValue
+                                                    .toString();
+                                              }
+                                            },
+                                          ),
                                         ),
 
+                                        SizedBox(width: 10.w),
+
+                                        /// manual edit (FIXED)
                                         SizedBox(
-                                          width: 80,
+                                          width: 70,
                                           child: TextField(
+                                            onTapOutside: (v) {
+                                              FocusScope.of(context).unfocus();
+                                            },
+                                            controller: controller,
                                             textAlign: TextAlign.center,
                                             keyboardType: TextInputType.number,
-                                            controller: TextEditingController(
-                                              text: quantity.toString(),
+                                            decoration: InputDecoration(
+                                              filled: true,
+                                              fillColor: Colors.grey.shade100,
+
+                                              border: OutlineInputBorder(
+                                                borderSide: BorderSide.none,
+                                                borderRadius:
+                                                    BorderRadius.circular(12.r),
+                                              ),
                                             ),
                                             onSubmitted: (value) {
                                               final newValue = int.tryParse(
                                                 value,
                                               );
+
                                               if (newValue != null) {
                                                 context
                                                     .read<HomeCubit>()
@@ -249,35 +341,48 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     );
                                               }
                                             },
-                                            decoration: const InputDecoration(
-                                              border: InputBorder.none,
-                                            ),
                                           ),
                                         ),
 
-                                        IconButton(
-                                          icon: const Icon(Icons.add),
-                                          onPressed: () {
-                                            context
-                                                .read<HomeCubit>()
-                                                .updateQuantity(
-                                                  id: id,
-                                                  newQuantity: quantity + 1,
-                                                );
-                                          },
+                                        SizedBox(width: 10.w),
+
+                                        /// plus
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(
+                                              12.r,
+                                            ),
+                                            color: AppColors
+                                                .backGroundTextFormFiled,
+                                          ),
+                                          child: IconButton(
+                                            icon: const Icon(
+                                              Icons.add,
+
+                                              color: Colors.black,
+                                            ),
+                                            onPressed: () {
+                                              final newValue = quantity + 1;
+
+                                              context
+                                                  .read<HomeCubit>()
+                                                  .updateQuantity(
+                                                    id: id,
+                                                    newQuantity: newValue,
+                                                  );
+
+                                              controller.text = newValue
+                                                  .toString();
+                                            },
+                                          ),
                                         ),
                                       ],
                                     ),
 
-                                    Text(
-                                      "الحد الأدنى: $minQuantity",
-                                      style: TextStyle(fontSize: 20.sp),
-                                    ),
-
                                     if (isLow)
                                       const Text(
-                                        "الكمية منخفضة",
-                                        style: TextStyle(color: Colors.red),
+                                        "الكمية منخفضة لديك",
+                                        style: TextStyle(color: Colors.white),
                                       ),
                                   ],
                                 ),
