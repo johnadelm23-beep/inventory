@@ -137,7 +137,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                 ),
                 SizedBox(height: 20.h),
-                SiginWithGoogleContainer(),
+                SiginWithGoogleContainer(
+                  onTap: () {
+                    context.read<AuthCubit>().signInWithGoogle();
+                  },
+                ),
               ],
             ),
           ),

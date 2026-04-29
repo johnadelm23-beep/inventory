@@ -9,7 +9,7 @@ class CustomTextFormField extends StatefulWidget {
     required this.hintText,
     required this.keyboardType,
     required this.controller,
-    required this.validator,
+    this.validator,
     this.maxLines = 1,
   });
   final String hintText;
