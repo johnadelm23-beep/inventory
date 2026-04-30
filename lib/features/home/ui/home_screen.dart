@@ -4,10 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:inventory/core/theme/app_colors.dart';
+import 'package:inventory/core/widgets/custom_text_form_field.dart';
 import 'package:inventory/features/admin/ui/add_product_screen.dart';
+import 'package:inventory/features/admin/ui/all_users.dart';
+import 'package:inventory/features/admin/ui/dashboard_admin.dart';
+import 'package:inventory/features/admin/ui/profile_screen.dart';
 import 'package:inventory/features/auth/cubit/cubit/auth_cubit.dart';
 import 'package:inventory/features/auth/ui/login_screen.dart';
 import 'package:inventory/features/home/cubit/cubit/home_cubit.dart';
+import 'package:inventory/features/home/ui/widgets/about_app_list_tile.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,6 +22,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String searchTitle = "";
   @override
   void initState() {
     super.initState();
@@ -33,7 +39,9 @@ class _HomeScreenState extends State<HomeScreen> {
             showDialog(
               context: context,
               barrierDismissible: false,
-              builder: (_) => const Center(child: CircularProgressIndicator()),
+              builder: (_) => const Center(
+                child: CircularProgressIndicator(color: AppColors.primaryColor),
+              ),
             );
           }
 
@@ -52,66 +60,163 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         },
         child: Scaffold(
+          drawer: Drawer(
+            child: Builder(
+              builder: (context) {
+                final user = context.read<HomeCubit>().userData;
+
+                if (user == null) {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.primaryColor,
+                    ),
+                  );
+                }
+
+                return Column(
+                  children: [
+                    // 👤 Header
+                    UserAccountsDrawerHeader(
+                      decoration: const BoxDecoration(
+                        color: AppColors.primaryColor,
+                      ),
+                      accountName: Text(
+                        user.name ?? "",
+                        style: TextStyle(fontSize: 17.sp),
+                      ),
+
+                      accountEmail: Text(
+                        user.email!,
+                        style: TextStyle(fontSize: 15.sp),
+                      ),
+
+                      currentAccountPicture: const CircleAvatar(
+                        backgroundColor: AppColors.whiteColor,
+                        child: Icon(
+                          Icons.person,
+                          size: 30,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+
+                    if (user.isAdmin == true)
+                      ListTile(
+                        leading: const Icon(Icons.dashboard),
+                        title: const Text("لوحة التحكم"),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => DashboardAdmin(user: user),
+                            ),
+                          );
+                        },
+                      ),
+
+                    ListTile(
+                      leading: const Icon(Icons.person),
+                      title: const Text("الملف الشخصي"),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (c) => ProfileScreen(
+                              name: user.name ?? "",
+                              email: user.email ?? "",
+                              isAdmin: user.isAdmin ?? false,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    if (user.isAdmin == true)
+                      ListTile(
+                        leading: Icon(Icons.group),
+                        title: Text("كل المستخدمين"),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (c) => UsersScreen()),
+                          );
+                        },
+                      ),
+                    AboutAppListTitle(),
+
+                    const Divider(),
+
+                    ListTile(
+                      leading: const Icon(Icons.logout, color: Colors.red),
+                      title: const Text("تسجيل الخروج"),
+                      onTap: () async {
+                        await FirebaseAuth.instance.signOut();
+
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const LoginScreen(),
+                          ),
+                          (route) => false,
+                        );
+                      },
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+          appBar: AppBar(
+            backgroundColor: AppColors.primaryColor,
+            title: Text(
+              "الصفحة الرئيسية",
+              style: TextStyle(fontSize: 25.sp, color: AppColors.whiteColor),
+            ),
+            centerTitle: true,
+          ),
           backgroundColor: Colors.white,
           body: BlocBuilder<HomeCubit, HomeState>(
             builder: (context, state) {
               final user = context.read<HomeCubit>().userData;
 
               if (user == null) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.primaryColor,
+                  ),
+                );
               }
 
               return SafeArea(
                 child: Column(
                   children: [
-                    /// HEADER
                     Padding(
                       padding: EdgeInsets.all(12.r),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            "مرحباً بك يا ${user.name} 👋",
-                            style: TextStyle(fontSize: 22.sp),
-                          ),
-                          Row(
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  FirebaseAuth.instance.signOut();
-                                  Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => BlocProvider(
-                                        create: (_) => AuthCubit(),
-                                        child: const LoginScreen(),
-                                      ),
-                                    ),
-                                    (route) => false,
-                                  );
-                                },
-                                icon: const Icon(Icons.logout),
-                              ),
-
-                              if (user.isAdmin == true)
-                                IconButton(
-                                  icon: const Icon(Icons.add),
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => AddProductScreen(),
-                                      ),
-                                    );
-                                  },
-                                ),
-                            ],
+                          Expanded(
+                            child: Text(
+                              textDirection: .rtl,
+                              "مرحباً بك يا ${user.name} 👋",
+                              style: TextStyle(fontSize: 22.sp),
+                            ),
                           ),
                         ],
                       ),
                     ),
 
-                    /// LIST
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      child: CustomTextFormField(
+                        hintText: "ابحث عن منتج",
+                        keyboardType: .name,
+                        onChanged: (v) {
+                          setState(() {
+                            searchTitle = v.toLowerCase();
+                          });
+                        },
+                      ),
+                    ),
+
                     Expanded(
                       child: StreamBuilder<QuerySnapshot>(
                         stream: FirebaseFirestore.instance
@@ -129,8 +234,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           }
 
                           final docs = snapshot.data!.docs;
+                          final filterProducts = docs.where((doc) {
+                            final data = doc.data() as Map<String, dynamic>;
+                            final name = (data["name"] ?? "")
+                                .toString()
+                                .toLowerCase();
+                            return name.contains(searchTitle);
+                          }).toList();
 
-                          if (docs.isEmpty) {
+                          if (docs.isEmpty || filterProducts.isEmpty) {
                             return Center(
                               child: Text(
                                 "لا يوجد منتجات لديك لعرضها",
@@ -138,13 +250,16 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             );
                           }
-
+                          /**
+ * itemCount: filterProducts.length,
+final doc = filterProducts[index];
+ */
                           return ListView.separated(
                             padding: EdgeInsets.all(16.r),
-                            itemCount: docs.length,
+                            itemCount: filterProducts.length,
                             separatorBuilder: (_, __) => SizedBox(height: 12.h),
                             itemBuilder: (context, index) {
-                              final doc = docs[index];
+                              final doc = filterProducts[index];
                               final data = doc.data() as Map<String, dynamic>;
 
                               final id = doc.id;
@@ -163,7 +278,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
                               final isLow = quantity <= minQuantity;
 
-                              /// controller لكل عنصر
                               final controller = TextEditingController(
                                 text: quantity.toString(),
                               );
@@ -188,7 +302,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    /// NAME
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
@@ -217,7 +330,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                             onPressed: () {
                                               context
                                                   .read<HomeCubit>()
-                                                  .deleteProduct(id);
+                                                  .deleteProduct(
+                                                    id: id,
+                                                    name: name,
+                                                  );
                                             },
                                           ),
                                       ],
@@ -246,8 +362,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                             : Colors.black,
                                       ),
                                     ),
-
-                                    /// MIN QTY
                                     Text(
                                       "الحد الأدنى: $minQuantity",
                                       style: TextStyle(
@@ -257,7 +371,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                             : Colors.black,
                                       ),
                                     ),
-
                                     SizedBox(height: 12.h),
                                     Text(
                                       "انقر للتعديل:",
@@ -268,8 +381,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                             : Colors.black,
                                       ),
                                     ),
-
-                                    /// QUANTITY CONTROL (FIXED)
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
@@ -296,6 +407,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     .updateQuantity(
                                                       id: id,
                                                       newQuantity: newValue,
+                                                      name: name,
+                                                      oldQuantity: quantity,
                                                     );
 
                                                 controller.text = newValue
@@ -307,7 +420,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                         SizedBox(width: 10.w),
 
-                                        /// manual edit (FIXED)
                                         SizedBox(
                                           width: 70,
                                           child: TextField(
@@ -338,6 +450,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     .updateQuantity(
                                                       id: id,
                                                       newQuantity: newValue,
+                                                      name: name,
+                                                      oldQuantity: quantity,
                                                     );
                                               }
                                             },
@@ -346,7 +460,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                         SizedBox(width: 10.w),
 
-                                        /// plus
                                         Container(
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(
@@ -369,6 +482,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   .updateQuantity(
                                                     id: id,
                                                     newQuantity: newValue,
+                                                    name: name,
+                                                    oldQuantity: quantity,
                                                   );
 
                                               controller.text = newValue

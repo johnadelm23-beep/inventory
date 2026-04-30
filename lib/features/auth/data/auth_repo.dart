@@ -17,7 +17,12 @@ class AuthRepo {
         email: email,
         password: password,
       );
-      addUser(name: name, email: email, uId: response.user!.uid);
+      addUser(
+        name: name,
+        email: email,
+        uId: response.user!.uid,
+        password: password,
+      );
       return true;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
@@ -33,7 +38,6 @@ class AuthRepo {
 
   static Future<bool> login({
     required String password,
-
     required String email,
   }) async {
     try {
@@ -41,12 +45,25 @@ class AuthRepo {
         email: email,
         password: password,
       );
+
+      final userDoc = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(response.user!.uid)
+          .get();
+
+      final data = userDoc.data();
+
+      if (data?["isBlocked"] == true) {
+        await _firebaseAuth.signOut();
+        throw "هذا المستخدم محظور";
+      }
+
       return true;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        throw 'لا يوجد حساب مسجل بهذا البريد الإلكتروني';
+        throw 'لا يوجد حساب بهذا البريد';
       } else if (e.code == 'wrong-password') {
-        throw 'كلمة المرور التي أدخلتها غير صحيحة';
+        throw 'كلمة المرور غير صحيحة';
       }
       return false;
     } catch (e) {
@@ -58,11 +75,14 @@ class AuthRepo {
     required String name,
     required String email,
     required String uId,
+    required String password,
   }) async {
     try {
       await FirebaseFirestore.instance.collection("users").doc(uId).set({
         "name": name,
         "email": email,
+        "isBlocked": false,
+        "password": password,
       });
     } catch (e) {}
   }
@@ -90,18 +110,33 @@ class AuthRepo {
     }
   }
 
-  static Future<UserData?> getUserData(String uid) async {
+  static Future<UserData?> getUserData() async {
     try {
-      final currentUser = await FirebaseAuth.instance.currentUser;
+      final currentUser = FirebaseAuth.instance.currentUser;
+
+      if (currentUser == null) return null;
+
       final user = await FirebaseFirestore.instance
           .collection("users")
-          .doc(uid)
+          .doc(currentUser.uid)
           .get();
-      print(user.data());
 
-      return UserData.fromJson(user.data() ?? {});
+      final data = user.data();
+
+      if (data?["isBlocked"] == true) return null;
+
+      return UserData.fromJson(data ?? {});
     } catch (e) {
       return null;
     }
+  }
+
+  static Future<void> toggleBlockUser({
+    required String uid,
+    required bool currentState,
+  }) async {
+    await FirebaseFirestore.instance.collection("users").doc(uid).update({
+      "isBlocked": !currentState,
+    });
   }
 }

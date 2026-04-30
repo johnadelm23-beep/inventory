@@ -134,7 +134,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
                             context: context,
                             barrierDismissible: false,
                             builder: (_) => const Center(
-                              child: CircularProgressIndicator(),
+                              child: CircularProgressIndicator(
+                                color: AppColors.primaryColor,
+                              ),
                             ),
                           );
                         } else if (state is AddProductSuccess) {

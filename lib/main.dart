@@ -15,10 +15,7 @@ void main() async {
     MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => AuthCubit()),
-        BlocProvider(
-          create: (_) =>
-              HomeCubit()..getUserData(FirebaseAuth.instance.currentUser!.uid),
-        ),
+        BlocProvider(create: (_) => HomeCubit()..getUserData()),
       ],
       child: InventoryApp(),
     ),

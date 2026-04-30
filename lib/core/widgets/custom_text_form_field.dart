@@ -8,9 +8,10 @@ class CustomTextFormField extends StatefulWidget {
     this.obscureText = false,
     required this.hintText,
     required this.keyboardType,
-    required this.controller,
+    this.controller,
     this.validator,
     this.maxLines = 1,
+    this.onChanged,
   });
   final String hintText;
   final bool obscureText;
@@ -18,6 +19,7 @@ class CustomTextFormField extends StatefulWidget {
   final TextEditingController? controller;
   final String? Function(String?)? validator;
   final int maxLines;
+  final Function(String)? onChanged;
 
   @override
   State<CustomTextFormField> createState() => _CustomTextFormFieldState();
@@ -28,6 +30,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      onChanged: widget.onChanged,
       autovalidateMode: .onUserInteraction,
       textAlign: widget.keyboardType == .number
           ? TextAlign.left

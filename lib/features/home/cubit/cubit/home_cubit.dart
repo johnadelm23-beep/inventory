@@ -1,9 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:inventory/features/auth/data/auth_repo.dart';
 import 'package:inventory/features/auth/data/model/user_data.dart';
 import 'package:inventory/features/home/data/home_repo.dart';
-import 'package:meta/meta.dart';
 
 part 'home_state.dart';
 
@@ -12,10 +12,10 @@ class HomeCubit extends Cubit<HomeState> {
 
   UserData? userData;
 
-  Future<void> getUserData(String uid) async {
+  Future<void> getUserData() async {
     emit(GetUserLoading());
 
-    final response = await AuthRepo.getUserData(uid);
+    final response = await AuthRepo.getUserData();
 
     if (response != null) {
       userData = response;
@@ -39,6 +39,7 @@ class HomeCubit extends Cubit<HomeState> {
         quantity: int.parse(quantity),
         minQuantity: int.parse(minQuantity),
         description: description,
+        userName: userData?.name ?? "",
       );
 
       emit(AddProductSuccess());
@@ -51,21 +52,35 @@ class HomeCubit extends Cubit<HomeState> {
     return HomeRepo.getProduct();
   }
 
-  deleteProduct(String id) async {
+  Future<void> deleteProduct({required String id, required String name}) async {
     emit(DeleteProductLoading());
     try {
-      await HomeRepo.deleteProduct(id);
+      await HomeRepo.deleteProduct(
+        id,
+        productId: id,
+        name: name,
+        userName: userData?.name ?? "",
+      );
       emit(DeleteProductSuccess());
     } catch (e) {
       emit(DeleteProductError());
     }
   }
 
-  updateQuantity({required String id, required int newQuantity}) async {
+  Future<void> updateQuantity({
+    required String id,
+    required int newQuantity,
+    required String name,
+    required int oldQuantity,
+  }) async {
     try {
-      await FirebaseFirestore.instance.collection("products").doc(id).update({
-        "quantity": newQuantity,
-      });
+      await HomeRepo.updateQuantity(
+        id: id,
+        quantity: newQuantity,
+        name: name,
+        userName: userData?.name ?? "Unknown",
+        oldQuantity: oldQuantity,
+      );
     } catch (e) {
       print("UPDATE ERROR: $e");
     }

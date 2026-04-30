@@ -23,8 +23,8 @@ final class AddProductError extends HomeState {}
 
 final class AddProductLoading extends HomeState {}
 
-class DeleteProductLoading extends HomeState {}
+final class DeleteProductLoading extends HomeState {}
 
-class DeleteProductSuccess extends HomeState {}
+final class DeleteProductSuccess extends HomeState {}
 
-class DeleteProductError extends HomeState {}
+final class DeleteProductError extends HomeState {}

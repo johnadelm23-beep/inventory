@@ -1,11 +1,14 @@
 import 'package:bloc/bloc.dart';
 import 'package:inventory/features/auth/data/auth_repo.dart';
+import 'package:inventory/features/auth/data/model/user_data.dart';
 import 'package:meta/meta.dart';
 
 part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
+
+  UserData? currentUser;
 
   Future<void> register({
     required String name,
@@ -14,6 +17,7 @@ class AuthCubit extends Cubit<AuthState> {
     required String confirmPassword,
   }) async {
     emit(AuthLoadingState());
+
     try {
       final response = await AuthRepo.register(
         name: name,
@@ -21,6 +25,7 @@ class AuthCubit extends Cubit<AuthState> {
         confirmPassword: confirmPassword,
         email: email,
       );
+
       if (response) {
         emit(AuthSuccessState());
       } else {
@@ -33,12 +38,27 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> login({required String password, required String email}) async {
     emit(AuthLoadingState());
+
     try {
       final response = await AuthRepo.login(password: password, email: email);
+
       if (response) {
+        final user = await AuthRepo.getUserData();
+
+        if (user == null) {
+          emit(AuthErrorState(message: "لم يتم العثور على المستخدم"));
+          return;
+        }
+        if (user.isBlocked == true) {
+          emit(AuthErrorState(message: "هذا الحساب محظور"));
+          return;
+        }
+
+        currentUser = user;
+
         emit(AuthSuccessState());
       } else {
-        emit(AuthErrorState(message: "حدث خطأ أثناء التسجيل"));
+        emit(AuthErrorState(message: "بيانات غير صحيحة"));
       }
     } catch (e) {
       emit(AuthErrorState(message: e.toString()));
@@ -47,9 +67,25 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> signInWithGoogle() async {
     emit(AuthLoadingState());
+
     try {
       final response = await AuthRepo.signInWithGoogle();
+
       if (response) {
+        final user = await AuthRepo.getUserData();
+
+        if (user == null) {
+          emit(AuthErrorState(message: "فشل جلب بيانات المستخدم"));
+          return;
+        }
+
+        if (user.isBlocked == true) {
+          emit(AuthErrorState(message: "هذا الحساب محظور"));
+          return;
+        }
+
+        currentUser = user;
+
         emit(AuthSuccessState());
       } else {
         emit(AuthErrorState(message: "فشل تسجيل الدخول بجوجل"));
@@ -57,5 +93,10 @@ class AuthCubit extends Cubit<AuthState> {
     } catch (e) {
       emit(AuthErrorState(message: e.toString()));
     }
+  }
+
+  void logout() {
+    currentUser = null;
+    emit(AuthInitial());
   }
 }
