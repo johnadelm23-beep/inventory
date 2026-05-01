@@ -77,7 +77,6 @@ class CustomProductContainer extends StatelessWidget {
 
           SizedBox(height: 6.h),
 
-          /// 📝 Description
           Text(
             description,
             style: TextStyle(
@@ -88,7 +87,6 @@ class CustomProductContainer extends StatelessWidget {
 
           SizedBox(height: 12.h),
 
-          /// 📦 Quantity info
           _infoRow("الكميه الحالية", "$quantity", isLow),
           _infoRow("الحد الأدنى", "$minQuantity", isLow),
 
@@ -105,7 +103,6 @@ class CustomProductContainer extends StatelessWidget {
 
           SizedBox(height: 10.h),
 
-          /// ➕➖ Controls
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -123,6 +120,9 @@ class CustomProductContainer extends StatelessWidget {
               SizedBox(
                 width: 70,
                 child: TextField(
+                  onChanged: (value) {
+                    (context as Element).markNeedsBuild();
+                  },
                   controller: controller,
                   textAlign: TextAlign.center,
                   keyboardType: TextInputType.number,
@@ -170,7 +170,6 @@ class CustomProductContainer extends StatelessWidget {
     );
   }
 
-  /// 🔄 Update function (clean)
   void _update(BuildContext context, int newValue) {
     context.read<HomeCubit>().updateQuantity(
       id: id,

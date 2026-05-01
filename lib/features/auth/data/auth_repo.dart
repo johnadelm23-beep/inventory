@@ -108,6 +108,17 @@ class AuthRepo {
       final user = userCredential.user;
 
       if (user != null) {
+        final doc = await FirebaseFirestore.instance
+            .collection("users")
+            .doc(user.uid)
+            .get();
+        final data = doc.data();
+
+        if (data?["isBlocked"] == true) {
+          await FirebaseAuth.instance.signOut();
+          throw "هذا الحساب محظور";
+        }
+
         await FirebaseFirestore.instance.collection("users").doc(user.uid).set({
           "name": user.displayName ?? "User",
           "email": user.email ?? "",
@@ -117,7 +128,7 @@ class AuthRepo {
 
       return true;
     } catch (e) {
-      return false;
+      throw e.toString();
     }
   }
 

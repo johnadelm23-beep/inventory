@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -5,6 +6,7 @@ import 'package:inventory/core/theme/app_colors.dart';
 import 'package:inventory/core/widgets/app_button.dart';
 import 'package:inventory/core/widgets/custom_text_form_field.dart';
 import 'package:inventory/features/auth/cubit/cubit/auth_cubit.dart';
+import 'package:inventory/features/auth/data/model/user_data.dart';
 import 'package:inventory/features/auth/ui/register_screen.dart';
 import 'package:inventory/features/auth/ui/widgets/sigin_with_google_container.dart';
 import 'package:inventory/features/home/ui/home_screen.dart';
@@ -29,6 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,8 +63,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           if (v == null || v.isEmpty) {
                             return "هذا الحقل مطلوب";
                           }
-                          if (v.length < 4) {
-                            return "الاسم يجب ان يحتوي علي 4 احرف اة اكثر";
+                          final emailRegex = RegExp(
+                            r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                          );
+                          if (!emailRegex.hasMatch(v)) {
+                            return "أدخل إيميل صحيح";
                           }
                           return null;
                         },
@@ -145,6 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                 ),
                 SizedBox(height: 20.h),
+
                 SiginWithGoogleContainer(
                   onTap: () {
                     context.read<AuthCubit>().signInWithGoogle();
