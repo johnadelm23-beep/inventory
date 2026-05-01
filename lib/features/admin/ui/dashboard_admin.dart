@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:inventory/core/theme/app_colors.dart';
 import 'package:inventory/features/admin/ui/add_product_screen.dart';
 import 'package:inventory/features/auth/data/model/user_data.dart';
-import 'package:inventory/features/home/ui/home_screen.dart';
 
 class DashboardAdmin extends StatefulWidget {
   const DashboardAdmin({super.key, required this.user});
@@ -24,16 +23,14 @@ class _DashboardAdminState extends State<DashboardAdmin> {
 
         appBar: AppBar(
           backgroundColor: AppColors.primaryColor,
+          elevation: 0,
           leading: IconButton(
-            onPressed: () => Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => const HomeScreen()),
-            ),
+            onPressed: () => Navigator.pop(context),
             icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           ),
           title: Text(
             "لوحة التحكم",
-            style: TextStyle(fontSize: 25.sp, color: Colors.white),
+            style: TextStyle(fontSize: 22.sp, color: Colors.white),
           ),
           centerTitle: true,
         ),
@@ -44,18 +41,12 @@ class _DashboardAdminState extends State<DashboardAdmin> {
             child: Column(
               crossAxisAlignment: .start,
               children: [
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    "مرحباً يا ${widget.user.name} 👋",
-                    style: TextStyle(
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                Text(
+                  "سجل نشاطاتك : ",
+                  style: TextStyle(fontSize: 20.sp, fontWeight: .bold),
                 ),
 
-                SizedBox(height: 10.h),
+                SizedBox(height: 12.h),
 
                 Expanded(
                   child: StreamBuilder<QuerySnapshot>(
@@ -73,69 +64,69 @@ class _DashboardAdminState extends State<DashboardAdmin> {
                       if (logs.isEmpty) {
                         return Center(
                           child: Text(
-                            "لا يوجد نشاط حتى الآن",
-                            style: TextStyle(fontSize: 18.sp),
+                            "لا يوجد نشاط",
+                            style: TextStyle(fontSize: 25.sp),
                           ),
                         );
                       }
 
-                      return ListView.separated(
+                      return ListView.builder(
                         itemCount: logs.length,
-                        separatorBuilder: (_, __) => SizedBox(height: 10.h),
                         itemBuilder: (context, index) {
-                          final data =
-                              logs[index].data() as Map<String, dynamic>;
+                          final doc = logs[index];
+                          final data = doc.data() as Map<String, dynamic>;
 
-                          final docId = logs[index].id;
-
+                          final docId = doc.id;
                           final userName = data["userName"] ?? "";
                           final action = data["action"] ?? "";
                           final product = data["productName"] ?? "";
-                          final change = data["change"] ?? "";
 
-                          final Timestamp? time = data["time"];
-                          final dateTime = time?.toDate();
+                          final change = _parseChange(data["change"]);
 
-                          final dateString = dateTime != null
-                              ? "${dateTime.day}/${dateTime.month}/${dateTime.year}"
+                          final time = data["time"]?.toDate();
+
+                          final date = time != null
+                              ? "${time.day}/${time.month}/${time.year}"
                               : "";
 
-                          final hour = dateTime?.hour ?? 0;
-                          final minute = dateTime?.minute ?? 0;
+                          final hour = time?.hour ?? 0;
+                          final minute = time?.minute ?? 0;
 
                           final isPM = hour >= 12;
                           final displayHour = hour % 12 == 0 ? 12 : hour % 12;
 
                           final period = isPM ? "مساءً" : "صباحًا";
 
-                          final timeString =
+                          final timeText =
                               "$displayHour:${minute.toString().padLeft(2, '0')} $period";
 
-                          IconData icon;
                           Color color;
+                          IconData icon;
 
                           if (action == "add") {
-                            icon = Icons.add_circle;
                             color = Colors.green;
+                            icon = Icons.add_circle;
                           } else if (action == "delete") {
-                            icon = Icons.delete;
                             color = Colors.red;
+                            icon = Icons.delete;
                           } else {
-                            icon = Icons.edit;
                             color = Colors.orange;
+                            icon = Icons.edit;
                           }
 
                           return Container(
-                            padding: EdgeInsets.all(12.r),
+                            margin: EdgeInsets.only(bottom: 10.h),
+                            padding: EdgeInsets.all(14.r),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(12.r),
+                              borderRadius: BorderRadius.circular(16.r),
                               boxShadow: const [
-                                BoxShadow(color: Colors.black12, blurRadius: 5),
+                                BoxShadow(blurRadius: 6, color: Colors.black12),
                               ],
                             ),
                             child: Row(
                               children: [
+                                /// 🗑 DELETE
                                 IconButton(
                                   onPressed: () {
                                     FirebaseFirestore.instance
@@ -144,41 +135,66 @@ class _DashboardAdminState extends State<DashboardAdmin> {
                                         .delete();
                                   },
                                   icon: const Icon(
-                                    Icons.delete,
+                                    Icons.delete_outline,
                                     color: Colors.grey,
                                   ),
                                 ),
 
-                                Icon(icon, color: color),
+                                CircleAvatar(
+                                  backgroundColor: color.withOpacity(0.1),
+                                  child: Icon(icon, color: color),
+                                ),
 
                                 SizedBox(width: 10.w),
 
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "$userName ${getActionText(action)} المنتج \"$product\"",
-                                        textAlign: TextAlign.right,
+                                        "$userName ${getActionText(action)} \"$product\"",
                                         style: TextStyle(
+                                          fontSize: 16.sp,
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 15.sp,
                                         ),
                                       ),
 
-                                      Text(
-                                        "التغيير: $change",
-                                        textAlign: TextAlign.right,
-                                        style: TextStyle(fontSize: 14.sp),
+                                      SizedBox(height: 6.h),
+
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 8.w,
+                                          vertical: 2.h,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: change > 0
+                                              ? Colors.green.withOpacity(0.1)
+                                              : Colors.red.withOpacity(0.1),
+                                          borderRadius: BorderRadius.circular(
+                                            8.r,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          change > 0
+                                              ? "زاد $change+"
+                                              : "نقص ${change * -1}-",
+                                          style: TextStyle(
+                                            fontSize: 14.sp,
+                                            fontWeight: FontWeight.bold,
+                                            color: change > 0
+                                                ? Colors.green
+                                                : Colors.red,
+                                          ),
+                                        ),
                                       ),
 
-                                      SizedBox(height: 5.h),
+                                      SizedBox(height: 6.h),
 
                                       Text(
-                                        "$dateString - $timeString",
-                                        textAlign: TextAlign.right,
+                                        "$date - $timeText",
                                         style: TextStyle(
-                                          fontSize: 13.sp,
+                                          fontSize: 12.sp,
                                           color: Colors.grey,
                                         ),
                                       ),
@@ -193,17 +209,15 @@ class _DashboardAdminState extends State<DashboardAdmin> {
                     },
                   ),
                 ),
-
-                SizedBox(height: 10.h),
                 FloatingActionButton(
                   backgroundColor: Colors.green,
+                  child: const Icon(Icons.add, color: AppColors.whiteColor),
                   onPressed: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => AddProductScreen()),
                     );
                   },
-                  child: const Icon(Icons.add, color: Colors.white),
                 ),
               ],
             ),
@@ -211,6 +225,16 @@ class _DashboardAdminState extends State<DashboardAdmin> {
         ),
       ),
     );
+  }
+
+  int _parseChange(dynamic value) {
+    if (value == null) return 0;
+
+    if (value is int) return value;
+
+    String v = value.toString().replaceAll("+", "").trim();
+
+    return int.tryParse(v) ?? 0;
   }
 }
 

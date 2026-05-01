@@ -11,6 +11,10 @@ class HomeCubit extends Cubit<HomeState> {
   HomeCubit() : super(HomeInitial());
 
   UserData? userData;
+  void cleaUser() {
+    userData = null;
+    emit(HomeInitial());
+  }
 
   Future<void> getUserData() async {
     emit(GetUserLoading());

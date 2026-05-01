@@ -34,7 +34,7 @@ class HomeRepo {
       userName: userName,
       action: "أضاف",
       productName: name,
-      change: "+${quantity}",
+      change: "${quantity}",
     );
   }
 
@@ -75,7 +75,7 @@ class HomeRepo {
       userName: userName,
       action: "تحديث",
       productName: name,
-      change: newQuantity > 0 ? "+${newQuantity}" : "${newQuantity}",
+      change: newQuantity > 0 ? "${newQuantity}" : "${newQuantity}",
     );
   }
 }

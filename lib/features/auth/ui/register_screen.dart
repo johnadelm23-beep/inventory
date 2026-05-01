@@ -63,6 +63,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 "أنشئ حساب جديد",
                 style: TextStyle(fontSize: 30.sp, fontWeight: .bold),
               ),
+
               SizedBox(height: 20.h),
               Form(
                 key: _key,

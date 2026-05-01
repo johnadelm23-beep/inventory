@@ -1,0 +1,10 @@
+flutter_native_splash:
+  color: "#4CAF50"
+  image: assets/images/inventory.png
+
+  android_12:
+    color: "#4CAF50"
+    image: assets\images\android12nativespalsh.png
+
+  android: true
+  ios: true

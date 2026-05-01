@@ -7,7 +7,6 @@ import 'package:inventory/core/widgets/custom_text_form_field.dart';
 import 'package:inventory/features/auth/cubit/cubit/auth_cubit.dart';
 import 'package:inventory/features/auth/ui/register_screen.dart';
 import 'package:inventory/features/auth/ui/widgets/sigin_with_google_container.dart';
-import 'package:inventory/features/home/cubit/cubit/home_cubit.dart';
 import 'package:inventory/features/home/ui/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -45,7 +44,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   "!أهلاً بعودتك مرة أخري",
                   style: TextStyle(fontWeight: .bold, fontSize: 30.sp),
                 ),
-                SizedBox(height: 20.h),
+                Image.asset(
+                  'assets/images/inventory.png',
+                  width: 200.w,
+                  height: 200.h,
+                ),
                 Form(
                   key: _key,
                   child: Column(
@@ -57,6 +60,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           if (v == null || v.isEmpty) {
                             return "هذا الحقل مطلوب";
                           }
+                          if (v.length < 4) {
+                            return "الاسم يجب ان يحتوي علي 4 احرف اة اكثر";
+                          }
+                          return null;
                         },
                         keyboardType: .emailAddress,
                       ),

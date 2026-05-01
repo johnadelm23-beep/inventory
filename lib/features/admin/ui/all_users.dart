@@ -22,10 +22,7 @@ class UsersScreen extends StatelessWidget {
           automaticallyImplyLeading: false,
           leading: IconButton(
             onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const HomeScreen()),
-              );
+              Navigator.pop(context);
             },
             icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           ),
