@@ -79,5 +79,5 @@ lib/
 git clone https://github.com/your-username/inventory.git
 flutter pub get
 flutter run
-flutter build windows
+
 
