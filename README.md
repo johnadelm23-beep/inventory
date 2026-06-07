@@ -1,133 +1,229 @@
 # 📦 Inventory Management System
 
-A modern and scalable Flutter-based Inventory Management Application with Firebase integration.  
-The system provides real-time inventory tracking, authentication, role-based access control, and responsive support for both mobile and desktop platforms.
+A modern, scalable, and real-time **Inventory Management Application** built with **Flutter** and **Firebase**.
+
+The system enables businesses to efficiently manage inventory, monitor stock movements, track user activities, and control access through role-based permissions. Designed with a clean architecture and responsive UI, the application supports both **mobile** and **desktop** platforms.
 
 ---
 
-# 🚀 Overview
+## 🚀 Features
 
-The application helps businesses efficiently manage products, monitor stock levels, and control user permissions through an intuitive dashboard and responsive user interface.
+### 🔐 Authentication & Authorization
 
----
+* Firebase Authentication
+* Secure Login & Registration
+* Session Persistence
+* Role-Based Access Control (Admin / Employee)
+* Protected Routes & User Permissions
 
-# ✨ Features
+### 📦 Inventory Management
 
-## 🔐 Authentication & Security
-- Firebase Authentication
-- Secure Login & Registration
-- Session Management
-- Role-Based Access (Admin / User)
+* Add New Products
+* Update Product Information
+* Delete Products
+* Real-Time Stock Updates
+* Inventory Quantity Management
+* Product Search & Filtering
 
-## 📦 Product Management
-- Add Products
-- Edit Product Information
-- Delete Products
-- Real-Time Inventory Updates
+### 📊 Dashboard & Reporting
 
-## 📊 Dashboard & Analytics
-- Inventory Statistics Dashboard
-- Product Counters
-- Stock Monitoring
-- Low Stock Alerts
+* Inventory Overview Dashboard
+* Product Statistics
+* Daily Inventory Reports
+* Activity Tracking
+* Stock Monitoring
+* Low Stock Detection
 
-## 👤 User Management
-- Admin Control Panel
-- User Roles & Permissions
-- Profile Management
+### 📝 Activity Logs
 
-## 📱 Responsive Experience
-- Mobile Responsive UI
-- Desktop Support
-- Windows Compatibility
+* Track Product Modifications
+* User Action History
+* Date-Based Log Filtering
+* Audit Trail for Inventory Changes
 
-## ☁️ Cloud Integration
-- Firebase Firestore Database
-- Real-Time Synchronization
-- Cloud Data Storage
+### 👥 User Management
 
----
+* Admin Dashboard
+* User Role Management
+* Employee Access Control
+* User Profile Management
 
-# 🖼️ Application Screenshots
+### ☁️ Firebase Integration
 
-## 🔐 Authentication
+* Cloud Firestore Database
+* Real-Time Synchronization
+* Secure Data Storage
+* Authentication Services
 
-<img width="1080" height="2400" src="https://github.com/user-attachments/assets/6855043a-dcb9-4c95-889e-633ead13397d" />
+### 📱 Responsive Design
 
-<img width="1080" height="2400" src="https://github.com/user-attachments/assets/7d75252d-5d3c-43a4-81fb-00598ac6e9cd" />
-
----
-
-## 🏠 Dashboard & Home
-
-<img width="1080" height="2400" src="https://github.com/user-attachments/assets/7c581e86-8618-4cf0-8295-1a2540e8f0ac" />
-
-<img width="1080" height="2400" src="https://github.com/user-attachments/assets/747ce7ae-2200-4a3e-a5c6-2d39625401d9" />
-
-<img width="1080" height="2400" src="https://github.com/user-attachments/assets/a0ffb158-44a1-4864-9639-944ee78c69f4" />
+* Mobile Optimized UI
+* Desktop Support
+* Windows Compatibility
+* Adaptive Layouts
+* Responsive Components
 
 ---
 
-## 📦 Product Management
+## 🖼️ Screenshots
 
-<img width="1080" height="2400" src="https://github.com/user-attachments/assets/9a5855fa-b0c1-4106-9346-9ba2d6378eea" />
+### Authentication
 
-<img width="1080" height="2400" src="https://github.com/user-attachments/assets/c651ef49-6562-41eb-80b2-184486d3b33a" />
+<img width="720" height="1600" alt="Register Screen" src="https://github.com/user-attachments/assets/c564d3b0-6864-4879-b72d-d8f9687da51e" />
 
----
+<img width="720" height="1600" alt="Login Screen" src="https://github.com/user-attachments/assets/91886fab-1fa3-4bd0-9700-b69679ed22c3" />
 
-## ⚠️ Low Stock Warnings
+### Inventory Logs
 
-<img width="1080" height="2400" src="https://github.com/user-attachments/assets/a75de640-2592-48cf-9de4-24ae2ea97e4f" />
+<img width="1080" height="2400" alt="Logs Screen" src="https://github.com/user-attachments/assets/197df6d9-54b8-4e2e-8931-513452c44be6" />
 
----
+<img width="1080" height="2400" alt="Detailed Logs" src="https://github.com/user-attachments/assets/2339cc44-91cf-4ea1-9353-fae43666a581" />
 
-## 👤 Users & Profiles
+### Product Management
 
-<img width="720" height="1600" src="https://github.com/user-attachments/assets/608af6ef-ce5c-4b4c-8cfe-ff58c8dff3a4" />
+<img width="720" height="1600" alt="Add Product Screen" src="https://github.com/user-attachments/assets/5e8e5992-cbc8-493b-b390-6506f3f15bbe" />
 
-<img width="720" height="1600" src="https://github.com/user-attachments/assets/69f8126d-fe4d-486f-9597-94d0973eb00a" />
+<img width="720" height="1600" alt="Products Screen" src="https://github.com/user-attachments/assets/12ef410e-e526-4ccd-bb22-dcd4b03d1b01" />
 
----
+### Navigation
 
-## 📱 Navigation & Drawer
-
-<img width="720" height="1600" src="https://github.com/user-attachments/assets/e27eaf5c-e573-4ab7-babb-c7f149640ff0" />
-
-<img width="720" height="1600" src="https://github.com/user-attachments/assets/2edf1736-b205-4fa3-819b-80d8dc192bed" />
+<img width="720" height="1600" alt="Drawer Screen" src="https://github.com/user-attachments/assets/bcbe689f-b305-4885-aa8a-54cb4ccd532b" />
 
 ---
 
-## ⚙️ Splash Screen
+## 🛠️ Tech Stack
 
-<img width="1080" height="2400" src="https://github.com/user-attachments/assets/1e76cbb8-96b0-4cc4-9791-fd8614811dcf" />
-
----
-
-# 🛠️ Tech Stack
-
-| Technology | Usage |
-|------------|-------|
-| Flutter | Cross-platform development |
-| Firebase | Backend services |
-| Firestore | Real-time database |
-| Firebase Auth | Authentication |
-| Cubit / BLoC | State Management |
-| ScreenUtil | Responsive Design |
-| Lottie | Animations |
+| Technology              | Purpose                                |
+| ----------------------- | -------------------------------------- |
+| Flutter                 | Cross-Platform Application Development |
+| Dart                    | Programming Language                   |
+| Firebase                | Backend Infrastructure                 |
+| Cloud Firestore         | Real-Time Database                     |
+| Firebase Authentication | User Authentication                    |
+| Cubit / BLoC            | State Management                       |
+| Flutter ScreenUtil      | Responsive UI                          |
+| Lottie                  | Animations                             |
+| Shared Preferences      | Local Storage                          |
+| Material Design         | UI Components                          |
 
 ---
 
-# 📂 Project Structure
+## 📂 Project Structure
 
 ```bash
-lib/
-├── core/
-├── features/
-│   ├── auth/
-│   ├── home/
-│   ├── admin/
-│   ├── products/
+lib
 │
-├── shared/
-├── main.dart
+├── core
+│   ├── constants
+│   ├── services
+│   ├── theme
+│   ├── utils
+│   └── widgets
+│
+├── features
+│   ├── auth
+│   ├── home
+│   ├── products
+│   ├── logs
+│   └── admin
+│
+├── shared
+│
+└── main.dart
+```
+
+---
+
+## ⚙️ Getting Started
+
+### Prerequisites
+
+Before running the project, make sure you have:
+
+* Flutter SDK installed
+* Firebase Project configured
+* Android Studio or VS Code
+* Dart SDK
+
+### Installation
+
+1. Clone the repository
+
+```bash
+git clone https://github.com/your-username/inventory-management-system.git
+```
+
+2. Navigate to the project directory
+
+```bash
+cd inventory-management-system
+```
+
+3. Install dependencies
+
+```bash
+flutter pub get
+```
+
+4. Configure Firebase
+
+* Create a Firebase project.
+* Add Android, iOS, or Windows applications.
+* Download the Firebase configuration files.
+* Place them in the appropriate project directories.
+
+5. Run the application
+
+```bash
+flutter run
+```
+
+---
+
+## 🏗️ Architecture
+
+The project follows a **Feature-Based Clean Architecture** approach combined with **Cubit/BLoC State Management**.
+
+```text
+Presentation Layer
+       │
+       ▼
+Cubit / BLoC
+       │
+       ▼
+Repository Layer
+       │
+       ▼
+Firebase Services
+       │
+       ▼
+Cloud Firestore
+```
+
+---
+
+## 🎯 Future Enhancements
+
+* Barcode Scanner Integration
+* Export Reports to Excel/PDF
+* Product Categories
+* Advanced Analytics Dashboard
+* Dark Mode Support
+* Multi-Warehouse Management
+* Notifications & Alerts
+
+---
+
+## 👨‍💻 Author
+
+John Adel
+
+Flutter Developer passionate about building scalable, responsive, and production-ready applications using Flutter and Firebase.
+
+---
+
+## 📄 License
+
+This project is available for educational and portfolio purposes.
+
+Feel free to fork, explore, and contribute.
